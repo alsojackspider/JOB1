@@ -5,8 +5,21 @@ services:
     region: ohio
     plan: free
     buildCommand: |
-      # Run from repo root so requirements.txt at repo root is found
-      pip install -r requirements.txt
+      # Try multiple locations for requirements.txt so builds don't fail
+      if [ -f requirements.txt ]; then
+        echo "Using root requirements.txt"
+        pip install -r requirements.txt
+      elif [ -f job1/requirements.txt ]; then
+        echo "Using job1/requirements.txt"
+        pip install -r job1/requirements.txt
+      elif [ -f job1/job1/requirements.txt ]; then
+        echo "Using job1/job1/requirements.txt"
+        pip install -r job1/job1/requirements.txt
+      else
+        echo "ERROR: No requirements.txt found in any expected location"
+        ls -la || true
+        exit 1
+      fi
       # Then run Django ops from the project directory
       cd job1
       python manage.py collectstatic --noinput
