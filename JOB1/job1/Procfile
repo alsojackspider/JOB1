@@ -1,0 +1,2 @@
+web: gunicorn job1.wsgi:application
+release: python manage.py migrate
