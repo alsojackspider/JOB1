@@ -5,8 +5,10 @@ services:
     region: ohio
     plan: free
     buildCommand: |
+      # Run from repo root so requirements.txt at repo root is found
+      pip install -r requirements.txt
+      # Then run Django ops from the project directory
       cd job1
-      pip install -r ../requirements.txt
       python manage.py collectstatic --noinput
       python manage.py migrate
     startCommand: cd job1 && gunicorn job1.wsgi:application
